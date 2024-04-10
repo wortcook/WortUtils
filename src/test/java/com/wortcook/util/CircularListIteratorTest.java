@@ -1,5 +1,6 @@
 package com.wortcook.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -194,7 +195,7 @@ public class CircularListIteratorTest {
 
     @Test
     void remove(){
-        List<String> elements = new CircularQueueList<>(Arrays.asList("A", "B", "C", "D", "E"));
+        List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
         CircularListIterator<String> iterator = new CircularListIterator<>(elements);
 
         assertEquals("A",iterator.next());
@@ -217,13 +218,13 @@ public class CircularListIteratorTest {
         assertEquals("A", iterator.next());
         assertEquals("D", iterator.next());
 
-        assertEquals(elements.get(4), iterator.next());
+        assertEquals(elements.get(0), iterator.next());
 
 
         final CircularListIterator<String> iteratorFail = new CircularListIterator<>(Collections.EMPTY_LIST);
         assertThrows(java.lang.IllegalStateException.class, () -> iteratorFail.remove());
 
-        List<String> elements2 = new CircularQueueList<>(Arrays.asList("A", "B"));        
+        List<String> elements2 = new ArrayList<>(Arrays.asList("A", "B"));        
         final CircularListIterator<String> iteratorFail2 = new CircularListIterator<>(elements2);
         assertEquals("A", iteratorFail2.next());
         assertEquals("B", iteratorFail2.next());
@@ -236,7 +237,7 @@ public class CircularListIteratorTest {
 
     @Test
     void set(){
-        List<String> elements = new CircularQueueList<>(Arrays.asList("A", "B", "C", "D", "E"));
+        List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
         CircularListIterator<String> iterator = new CircularListIterator<>(elements);
 
         assertEquals("A", iterator.next());
@@ -272,7 +273,7 @@ public class CircularListIteratorTest {
 
     @Test
     void add(){
-        List<String> elements = new CircularQueueList<>(Arrays.asList("A", "B", "C", "D", "E"));
+        List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
         CircularListIterator<String> iterator = new CircularListIterator<>(elements);
 
         assertEquals("A", iterator.next());

@@ -57,12 +57,12 @@ public class CircularListIterator<T> implements ListIterator<T> {
 
     @Override
     public int nextIndex() {
-        return (null == currentIndex) ? starterIdx : (currentIndex + 1)%elements.size();
+        return (null == currentIndex) ? starterIdx % elements.size() : (currentIndex + 1)%elements.size();
     }
 
     @Override
     public int previousIndex() {
-        return (null == currentIndex) ? starterIdx : (0 == currentIndex) ? elements.size() - 1 : currentIndex - 1;
+        return (null == currentIndex) ? starterIdx % elements.size() : (0 == currentIndex) ? elements.size() - 1 : currentIndex - 1;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class CircularListIterator<T> implements ListIterator<T> {
             starterIdx = 0;
         } else {
             elements.add(currentIndex, t);
-            currentIndex++;
+            currentIndex = this.nextIndex();
         }
     }
 
