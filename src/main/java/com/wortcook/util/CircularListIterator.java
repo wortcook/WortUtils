@@ -82,8 +82,16 @@ public class CircularListIterator<T> implements ListIterator<T> {
     @Override
     public void add(T t) {
         checkIndex();
-        elements.add(currentIndex, t);
-        currentIndex++;
+
+        //For the iterator, if the current index is 0, then the element is added at the end of the list.
+        //Otherwise, the element is added before the current index/element.
+        if(0 == currentIndex) {
+            elements.add(t);
+            starterIdx = 0;
+        } else {
+            elements.add(currentIndex, t);
+            currentIndex++;
+        }
     }
 
     protected void checkIndex() {
