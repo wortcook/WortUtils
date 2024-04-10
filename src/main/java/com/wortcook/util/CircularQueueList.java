@@ -1,8 +1,6 @@
 package com.wortcook.util;
 
 import java.util.Queue;
-import java.util.Set;
-import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -16,24 +14,35 @@ import java.util.ListIterator;
 public class CircularQueueList<T> implements Queue<T>, List<T> {
     private final List<T> elements;
 
+    /**
+     * Constructs an empty circular queue list.
+     */
     public CircularQueueList() {
         elements = new ArrayList<>();
     }
 
+    /**
+     * Constructs a circular queue list with the specified elements.
+     * @param elements
+     */
     public CircularQueueList(Collection<T> elements) {
         this.elements = new ArrayList<>(elements);
     }
 
-    // Implement methods for Queue interface
-
+    /**
+     * Adds a new element to the "end" of the queue.
+     */
     @Override
     public boolean add(T t) {
         return elements.add(t);
     }
 
+    /*
+     * 
+     */
     @Override
     public boolean offer(T t) {
-        elements.add(0, t);
+        elements.add(t);
         return true;
     }
 
