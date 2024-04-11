@@ -63,7 +63,7 @@ public class CircularListIterator<T> implements ListIterator<T> {
      * @param elements
      */
     public CircularListIterator(final List<T> elements) {
-        this(new ArrayList<>(), 0);
+        this(elements, 0);
     }
 
     /**
@@ -73,7 +73,7 @@ public class CircularListIterator<T> implements ListIterator<T> {
      *                A value of 0 will start at the beginning of the list.
      */
     public CircularListIterator(final List<T> elements, final int index) {
-        this(elements, index, 2*elements.size());
+        this(elements, index, 10*elements.size());
     }
 
     /**
@@ -86,7 +86,7 @@ public class CircularListIterator<T> implements ListIterator<T> {
      */
     public CircularListIterator(final List<T> elements, final int index, final int maxSteps) {
         this.elements = elements;
-        this.starterIdx = index % elements.size();
+        this.starterIdx = elements.isEmpty()?0:(index % elements.size());
         this.maxAllowedSteps = maxSteps;
     }
 
