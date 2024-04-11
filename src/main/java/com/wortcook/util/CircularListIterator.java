@@ -1,6 +1,8 @@
 package com.wortcook.util;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -12,7 +14,8 @@ import java.util.Optional;
  * to the beginning of the list and vice versa. So unlike a regular ListIterator, the CircularListIterator
  * will never throw a NoSuchElementException unless the list is empty or the maximum number of steps is reached.
  * 
- * A maximum number of steps can be set to prevent long infinite loops. The default maximum number of steps is 100000.
+ * A maximum number of steps can be set to prevent long infinite loops. The default maximum number of steps is twice
+ * the initial list passed in.
  * Once the maximum number of steps is reached the iterator starts behaving like a regular ListIterator.
  * So hasNext() and hasPrevious() will return false and next() and previous() will throw a NoSuchElementException if
  * the iterator is at the end or beginning of the list respectively. The iterator can still be used to get the current
@@ -21,8 +24,6 @@ import java.util.Optional;
  * expected. The step count can be reset using resetStepCount() once the iterator reaches the max steps.
  */
 public class CircularListIterator<T> implements ListIterator<T> {
-    public static final int MAX_STEPS = 100000;
-
     private final List<T> elements;
     private Integer currentIndex = null;
     private int starterIdx;
@@ -30,13 +31,49 @@ public class CircularListIterator<T> implements ListIterator<T> {
     private final int maxAllowedSteps;
 
     /**
+     * Creates a CircularListIterator that starts at the beginning of elements
+     * @param elements
+     */
+    public CircularListIterator(final T[] elements) {
+        this(new ArrayList<T>(List.of(elements)));
+    }
+
+    public CircularListIterator(final T[] elements, final int index) {
+        this(new ArrayList<T>(List.of(elements)), index);
+    }
+
+    public CircularListIterator(final T[] elements, final int index, final int maxSteps) {
+        this(new ArrayList<T>(List.of(elements)), index, maxSteps);
+    }
+
+    public CircularListIterator(final Collection<T> elements) {
+        this(new ArrayList<T>(elements));
+    }
+
+    public CircularListIterator(final Collection<T> elements, final int index) {
+        this(new ArrayList<T>(elements), index);
+    }
+
+    public CircularListIterator(final Collection<T> elements, final int index, final int maxSteps) {
+        this(new ArrayList<T>(elements), index, maxSteps);
+    }
+
+    /**
      * Creates a CircularListIterator that starts at the beginning of the passed list.
      * @param elements
      */
     public CircularListIterator(final List<T> elements) {
-        this.elements = elements;
-        this.starterIdx = 0;
-        this.maxAllowedSteps = MAX_STEPS;
+        this(new ArrayList<>(), 0);
+    }
+
+    /**
+     * Creates a CircularListIterator that starts at the specified index of the passed list.
+     * @param elements - The list of elements to iterate through.
+     * @param index - The index to start at. When next or previous is first called this will be the index of the element returned.
+     *                A value of 0 will start at the beginning of the list.
+     */
+    public CircularListIterator(final List<T> elements, final int index) {
+        this(elements, index, 2*elements.size());
     }
 
     /**
@@ -53,17 +90,6 @@ public class CircularListIterator<T> implements ListIterator<T> {
         this.maxAllowedSteps = maxSteps;
     }
 
-    /**
-     * Creates a CircularListIterator that starts at the specified index of the passed list.
-     * @param elements - The list of elements to iterate through.
-     * @param index - The index to start at. When next or previous is first called this will be the index of the element returned.
-     *                A value of 0 will start at the beginning of the list.
-     */
-    public CircularListIterator(final List<T> elements, final int index) {
-        this.elements = elements;
-        this.starterIdx = index % elements.size();
-        this.maxAllowedSteps = MAX_STEPS;
-    }
 
     /**
      * Returns if there is a next element in the list. If the list is empty this will return false.
@@ -272,6 +298,11 @@ public class CircularListIterator<T> implements ListIterator<T> {
         return elements.get(currentIndex);
     }
 
+    /**
+     * Returns the current element in the list as an Optional. If the iterator is not initialized by either calling next(), previous(),
+     * nextElement(), or previousElement() first, this will return an empty Optional.
+     * @return The current element in the list as an Optional.
+     */
     public Optional<T> elementAt() {
         return (null == currentIndex) ? Optional.empty() : Optional.of(elements.get(currentIndex));
     }
