@@ -1,7 +1,6 @@
 package com.wortcook.util;
 
 import java.util.List;
-import java.lang.module.ModuleDescriptor.Builder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -170,7 +169,10 @@ public class CircularListIterator<T> implements ListIterator<T> {
      */
     @Override
     public int nextIndex() {
-        return (null == currentIndex) ? starterIdx % elements.size() : (currentIndex + 1)%elements.size();
+        return (null == currentIndex) ? 
+            starterIdx % elements.size() 
+            :
+            (currentIndex + 1)%elements.size();
     }
 
     /**
@@ -180,7 +182,14 @@ public class CircularListIterator<T> implements ListIterator<T> {
      */
     @Override
     public int previousIndex() {
-        return (null == currentIndex) ? (0 == starterIdx)? elements.size() - 1 : (starterIdx - 1)%elements.size() : (0 == currentIndex) ? elements.size() - 1 : currentIndex - 1;
+        return (null == currentIndex) ? 
+            (0 == starterIdx)? 
+                elements.size() - 1 : 
+                (starterIdx - 1)%elements.size() 
+            : 
+            (0 == currentIndex) ? 
+                elements.size() - 1 : 
+                currentIndex - 1;
     }
 
     /**
