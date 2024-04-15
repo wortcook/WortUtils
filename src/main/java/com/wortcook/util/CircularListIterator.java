@@ -14,14 +14,14 @@ import java.util.Optional;
  * or start at the beginning of the list. Once the iterator reaches the end of the list it will wrap around
  * to the beginning of the list and vice versa. So unlike a regular ListIterator, the CircularListIterator
  * will never throw a NoSuchElementException unless the list is empty or the maximum number of steps is reached.
- * 
+ * <br><br>
  * A maximum number of steps can be set to prevent long infinite loops. The default maximum number of steps is twice
- * the initial list passed in.
+ * the initial list passed in.<br>
  * Once the maximum number of steps is reached the iterator starts behaving like a regular ListIterator.
  * So hasNext() and hasPrevious() will return false and next() and previous() will throw a NoSuchElementException if
  * the iterator is at the end or beginning of the list respectively. The iterator can still be used to get the current
  * element, remove the current element, set the current element, and add an element to the list. The iterator will need
- * to be moved to a valid index before any further changes can be made.
+ * to be moved to a valid index before any further changes can be made.<br>
  * expected. The step count can be reset using resetStepCount() once the iterator reaches the max steps.
  */
 public class CircularListIterator<T> implements ListIterator<T> {
@@ -31,10 +31,24 @@ public class CircularListIterator<T> implements ListIterator<T> {
     private int stepCount = 0;
     private final int maxAllowedSteps;
 
+    /**
+     * Creates a CircularListIterator that starts at the beginning of the passed list
+     * and has a maximum number of steps equal Integer.MAX_VALUE.
+     * @param elements - The list of elements to iterate through. Note any changes made to
+     *                   the list will be reflected in the iterator and vice versa.
+     */
     public CircularListIterator(final List<T> elements) {
         this(elements, 0);
     }
 
+    /**
+     * Creates a CircularListIterator that starts at the specified index of the passed list
+     * and has a maximum number of steps equal Integer.MAX_VALUE.
+     * @param elements - The list of elements to iterate through. Note any changes made to
+     *                   the list will be reflected in the iterator and vice versa.
+     * @param index - The index to start at. When next or previous is first called this will be the index of the element returned.
+     *                use 0 to start at the beginning of the list so that max steps can be used. 
+     */
     public CircularListIterator(final List<T> elements, final int index) {
         this(elements, index, Integer.MAX_VALUE);
     }
@@ -205,15 +219,16 @@ public class CircularListIterator<T> implements ListIterator<T> {
      * nextElement(), or previousElement() first, this will throw an IllegalStateException.
      * After remove is called the iterator is no longer initialized and a call to next(), previous(), nextElement(),
      * or previousElement() must be made before any further changes can be made; remove(), set(), or add().
+     * <br><br><br>
      * <code>
-     *    CircularListIterator<String> iterator = new CircularListIterator<>(new ArrayList<String>(Arrays.asList("A", "B", "C")));
-     *    iterator.next(); //iterator now "points" to "A"
-     *    iterator.next(); //iterator now "points" to "B"
-     *    iterator.remove(); //removes "B" from the list
-     *    iterator.next(); //iterator now "points" to "C"
-     * 
-     * //note that iteratoror.prev() would have returned A.
-     * </code>
+     *    CircularListIterator&lt;String&gt; iterator = new CircularListIterator&lt;&gt;(new ArrayList&lt;String&gt;(Arrays.asList("A", "B", "C")));<br>
+     *    iterator.next(); //iterator now "points" to "A"<br>
+     *    iterator.next(); //iterator now "points" to "B"<br>
+     *    iterator.remove(); //removes "B" from the list<br>
+     *    iterator.next(); //iterator now "points" to "C"<br>
+     * <br>
+     * //note that iteratoror.prev() would have returned A.<br>
+     * </code><br>
      * Another way to think about it is that the remove leaves a hole where iterator is currently pointing. So
      * in order to make any further changes the iterator must be moved to a valid index.
      */
@@ -508,10 +523,22 @@ public class CircularListIterator<T> implements ListIterator<T> {
         }
     }
 
+    /**
+     * Utility method to create a Builder for a CircularListIterator.
+     * @param <T>
+     * @return A Builder for a CircularListIterator.
+     */
     public static <T> Builder<T> builder() {
         return new Builder<>();
     }
 
+    /**
+     * Utility method to create an Iterable that returns the passed iterator when iterator is called.
+     * @param <T>
+     * @param builder - The builder to create the iterator. Any parameters that need to be set on the builder 
+     *                  should be set before passing it in.
+     * @return An Iterable that returns the passed iterator when iterator is called.
+     */
     public static <T> Iterable<T> iterableOf(Builder<T> builder){
         return new Iterable<T>(){
             @Override
@@ -535,6 +562,13 @@ public class CircularListIterator<T> implements ListIterator<T> {
         };
     }
 
+    /**
+     * Utility method to create an Iterable that returns a CircularListIterator when iterator is called.
+     * @param <T>
+     * @param elements - The list of elements to iterate over.
+     * @param index - The index to start at.
+     * @return An Iterable that returns a CircularListIterator when iterator is called.
+     */
     public static <T> Iterable<T> iterableOf(final List<T> elements, final int index){
         return new Iterable<T>(){
             @Override
@@ -544,6 +578,14 @@ public class CircularListIterator<T> implements ListIterator<T> {
         };
     }
 
+    /**
+     * Utility method to create an Iterable that returns a CircularListIterator when iterator is called.
+     * @param <T>
+     * @param elements - The list of elements to iterate over.
+     * @param index - The index to start at.
+     * @param maxSteps - The maximum number of steps the iterator can take.
+     * @return An Iterable that returns a CircularListIterator when iterator is called.
+     */
     public static <T> Iterable<T> iterableOf(final List<T> elements, final int index, final int maxSteps){
         return new Iterable<T>(){
             @Override
