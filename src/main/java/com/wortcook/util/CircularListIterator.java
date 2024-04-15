@@ -172,7 +172,11 @@ public class CircularListIterator<T> implements ListIterator<T> {
         return (null == currentIndex) ? 
             starterIdx % elements.size() 
             :
-            (currentIndex + 1)%elements.size();
+            (this.stepCount < maxAllowedSteps) ? 
+                (currentIndex + 1)%elements.size() : 
+                (currentIndex < elements.size() - 1) ? 
+                    currentIndex + 1 : 
+                    elements.size();
     }
 
     /**
@@ -184,11 +188,15 @@ public class CircularListIterator<T> implements ListIterator<T> {
     public int previousIndex() {
         return (null == currentIndex) ? 
             (0 == starterIdx)? 
-                elements.size() - 1 : 
+                elements.size() - 1 
+                : 
                 (starterIdx - 1)%elements.size() 
             : 
             (0 == currentIndex) ? 
-                elements.size() - 1 : 
+                (stepCount < maxAllowedSteps) ? //continue to wrap around
+                    elements.size() - 1 : //wrap around
+                    -1  //no previous element
+                :
                 currentIndex - 1;
     }
 
@@ -329,7 +337,7 @@ public class CircularListIterator<T> implements ListIterator<T> {
      * the next call to next() or nextElement() will return the element that was written ahead.
      * @param t - The element to write ahead of the current element.
      */
-    public void writeAhead(final T t) {
+    public void addNext(final T t) {
         checkIndex();
         if(currentIndex == elements.size() - 1) {
             elements.add(t);
@@ -345,7 +353,7 @@ public class CircularListIterator<T> implements ListIterator<T> {
      * elements are written is the order that they are in the collection.
      * @param c - The elements to write ahead of the current element.
      */
-    public void writeAllAhead(final Collection<T> c) {
+    public void addAllNext(final Collection<T> c) {
         checkIndex();
         if(currentIndex == elements.size() - 1) {
             elements.addAll(c);
@@ -473,7 +481,7 @@ public class CircularListIterator<T> implements ListIterator<T> {
          * If no maximum number of steps is provided, the iterator will not have a maximum number set to Integer.MAX_VALUE.
          * @return The CircularListIterator.
          */
-        public CircularListIterator<T> build() {
+        public CircularListIterator<T> iterator() {
             if(null == elementsList) {
                 throw new IllegalStateException("No elements provided.");
             }
@@ -490,7 +498,7 @@ public class CircularListIterator<T> implements ListIterator<T> {
         }
 
         public Iterable<T> iterable() {
-            final CircularListIterator<T> iterator = build();
+            final CircularListIterator<T> iterator = iterator();
             return new Iterable<T>(){
                 @Override
                 public Iterator<T> iterator() {
@@ -508,7 +516,7 @@ public class CircularListIterator<T> implements ListIterator<T> {
         return new Iterable<T>(){
             @Override
             public Iterator<T> iterator() {
-                return builder.build();
+                return builder.iterator();
             }
         };
     }
@@ -544,133 +552,5 @@ public class CircularListIterator<T> implements ListIterator<T> {
             }
         };
     }
-
-    /**
-     * Utility method to create a List that returns a CircularListIterator when iterator or listIterator is called.
-     * The returned List is a thin wrapper around the passed list so changes to the list will be reflected in the iterator.
-     * The returned List cannot be cast to any other type so only the methods of List can be used.
-     * @param <T> - The type of elements in the list.
-     * @param elements - The list of elements to wrap.
-     * @return A List that returns a CircularListIterator when iterator or listIterator is called that wraps the underlying list.
-     */
-    // public static <T> List<T> listFrom(final List<T> elements) {
-    //     return new List<T>(){
-    //         @Override
-    //         public int size() {
-    //             return elements.size();
-    //         }
-
-    //         @Override
-    //         public boolean isEmpty() {
-    //             return elements.isEmpty();
-    //         }
-
-    //         @Override
-    //         public boolean contains(Object o) {
-    //             return elements.contains(o);
-    //         }
-
-    //         @Override
-    //         public Iterator<T> iterator() {
-    //             return new CircularListIterator<>(elements);
-    //         }
-
-    //         @Override
-    //         public Object[] toArray() {
-    //             return elements.toArray();
-    //         }
-
-    //         @Override
-    //         public <E> E[] toArray(E[] a) {
-    //             return elements.toArray(a);
-    //         }
-
-    //         @Override
-    //         public boolean add(T e) {
-    //             return elements.add(e);
-    //         }
-
-    //         @Override
-    //         public boolean remove(Object o) {
-    //             return elements.remove(o);
-    //         }
-
-    //         @Override
-    //         public boolean containsAll(Collection<?> c) {
-    //             return elements.containsAll(c);
-    //         }
-
-
-    //         @Override
-    //         public boolean addAll(int index, Collection<? extends T> c) {
-    //             return elements.addAll(index, c);
-    //         }
-
-    //         @Override
-    //         public boolean removeAll(Collection<?> c) {
-    //             return elements.removeAll(c);
-    //         }
-
-    //         @Override
-    //         public boolean retainAll(Collection<?> c) {
-    //             return elements.retainAll(c);
-    //         }
-
-    //         @Override
-    //         public void clear() {
-    //             elements.clear();
-    //         }
-
-    //         @Override
-    //         public T get(int index) {
-    //             return elements.get(index);
-    //         }
-
-    //         @Override
-    //         public T set(int index, T element) {
-    //             return elements.set(index, element);
-    //         }
-
-    //         @Override
-    //         public void add(int index, T element) {
-    //             elements.add(index, element);
-    //         }
-
-    //         @Override
-    //         public T remove(int index) {
-    //             return elements.remove(index);
-    //         }
-
-    //         @Override
-    //         public int indexOf(Object o) {
-    //             return elements.indexOf(o);
-    //         }
-
-    //         @Override
-    //         public int lastIndexOf(Object o) {
-    //             return elements.lastIndexOf(o);
-    //         }
-
-    //         @Override
-    //         public ListIterator<T> listIterator() {
-    //             return new CircularListIterator<>(elements);
-    //         }
-
-    //         @Override
-    //         public ListIterator<T> listIterator(int index) {
-    //             return new CircularListIterator<>(elements, index);
-    //         }
-
-    //         @Override
-    //         public List<T> subList(int fromIndex, int toIndex) {
-    //             return elements.subList(fromIndex, toIndex);
-    //         }
-
-    //         @Override
-    //         public boolean addAll(Collection<? extends T> c) {
-    //             return elements.addAll(c);
-    //         }
-    //     };
-    // }
 }
  
