@@ -183,14 +183,14 @@ public class CircularListIterator<T> implements ListIterator<T> {
      */
     @Override
     public int nextIndex() {
-        return (null == currentIndex) ? 
-            starterIdx % elements.size() 
+        return (null == currentIndex) ? //if the iterator is not initialized
+            starterIdx % elements.size() // then start at starterIdx modulo the size of the list
             :
-            (this.stepCount < maxAllowedSteps) ? 
-                (currentIndex + 1)%elements.size() : 
-                (currentIndex < elements.size() - 1) ? 
-                    currentIndex + 1 : 
-                    elements.size();
+            (this.stepCount < maxAllowedSteps) ? //else if the max steps has not been reached
+                (currentIndex + 1)%elements.size() : //then return the next index modulo the size of the list to wrap around
+                (currentIndex < elements.size() - 1) ? //else if the current index is not at the end of the list
+                    currentIndex + 1 : //then return the next index
+                    elements.size(); //else we are at the end of the list so return elements.size() per ListIterator spec
     }
 
     /**
@@ -200,18 +200,18 @@ public class CircularListIterator<T> implements ListIterator<T> {
      */
     @Override
     public int previousIndex() {
-        return (null == currentIndex) ? 
-            (0 == starterIdx)? 
-                elements.size() - 1 
+        return (null == currentIndex) ? //if the iterator is not initialized
+            (0 == starterIdx)? //and the starter index is 0
+                elements.size() - 1 //then the previous index is the last index, wrap around
                 : 
-                (starterIdx - 1)%elements.size() 
+                (starterIdx - 1)%elements.size() //else the starterIdx is not 0 so return the previous index modulo the size of the list
             : 
-            (0 == currentIndex) ? 
-                (stepCount < maxAllowedSteps) ? //continue to wrap around
-                    elements.size() - 1 : //wrap around
-                    -1  //no previous element
+            (0 == currentIndex) ? //else the iterator is initialized and is at the beginning of the list
+                (stepCount < maxAllowedSteps) ? //if the max steps has not been reached
+                    elements.size() - 1 : //then return the last index
+                    -1  //else we are at the beginning of the list so return -1 per ListIterator spec
                 :
-                currentIndex - 1;
+                currentIndex - 1; //iterator initialized and not at the beginning of the list so return the previous index
     }
 
     /**
@@ -236,8 +236,8 @@ public class CircularListIterator<T> implements ListIterator<T> {
     public void remove() {
         checkIndex();
         elements.remove((int)currentIndex);
-        starterIdx = currentIndex;
-        currentIndex = null;
+        currentIndex = null; //iterator is no longer initialized, we have a "hole" in the list where the iterator was pointing.
+        starterIdx = currentIndex; //reset the starter index to the current index that way next/prev will work as expected.
     }
 
     /**
