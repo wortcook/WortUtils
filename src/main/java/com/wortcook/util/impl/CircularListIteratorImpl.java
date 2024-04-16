@@ -146,7 +146,6 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
         //Otherwise, the element is added before the current index/element.
         if(0 == currentIndex) {
             elements.add(t);
-            starterIdx = 0;
         } else {
             elements.add(currentIndex, t);
             //ensure that the current index still points to the same element.

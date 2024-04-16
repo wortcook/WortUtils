@@ -177,17 +177,5 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
     public static <T> Builder<T> builder() {
         return new Builder<>();
     }
-
-    public static <T> Builder<T> builder(final Collection<T> elements) {
-        return new Builder<T>().using(elements);
-    }
-
-    public static <T> Builder<T> builder(final T[] elements) {
-        return new Builder<T>().using(elements);
-    }
-
-    public static <T> Builder<T> builder(final List<T> elements) {
-        return new Builder<T>().using(elements);
-    }
 }
  
