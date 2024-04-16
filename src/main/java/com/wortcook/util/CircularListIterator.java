@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import com.wortcook.util.impl.CircularListIteratorImpl;
+import com.wortcook.util.impl.ConcurrentCircularListIteratorImpl;
 
 /**
  * CircularListIterator is a ListIterator that wraps around a List and allows for circular iteration.
@@ -51,6 +52,7 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
         private int     startIdx       = 0;
         private int     maxSteps       = Integer.MAX_VALUE;
         private int     maxEpochs      = -1;
+        private boolean isConcurrent   = false;
 
         /*
          * Sets the elements to be iterated over. The iterator returned will be over a List copy of the passed elements
@@ -136,19 +138,32 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
             return this;
         }
 
+        /**
+         * 
+         * @return
+         */
+        public Builder<T> withConcurrency() {
+            isConcurrent = true;
+            return this;
+        }
+
         /*
          * Builds the CircularListIterator. If no elements are provided, this will throw an IllegalStateException.
          * If no starting index is provided, the iterator will start at the beginning of the list.
          * If no maximum number of steps is provided, the iterator will not have a maximum number set to Integer.MAX_VALUE.
          * @return The CircularListIterator.
          */
-        public CircularListIterator<T> iterator() {
+        public CircularListIterator<T> build() {
 
             if( maxEpochs > 0 ) {
                 maxSteps = elementsList.size() * maxEpochs;
             }
 
-            return new CircularListIteratorImpl<T>(elementsList, startIdx, maxSteps);
+            if( isConcurrent ) {
+                return new ConcurrentCircularListIteratorImpl<T>(elementsList, startIdx, maxSteps);
+            }else{
+                return new CircularListIteratorImpl<T>(elementsList, startIdx, maxSteps);
+            }
         }
 
         /*
@@ -156,11 +171,10 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
          * @return An Iterable that returns a CircularListIterator when iterator is called.
          */
         public Iterable<T> iterable() {
-            final CircularListIterator<T> iterator = iterator();
             return new Iterable<T>(){
                 @Override
                 public Iterator<T> iterator() {
-                    return iterator;
+                    return iterator();
                 }
             };
         }
