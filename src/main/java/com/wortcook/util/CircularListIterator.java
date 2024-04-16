@@ -24,7 +24,7 @@ import com.wortcook.util.impl.CircularListIteratorImpl;
  * to be moved to a valid index before any further changes can be made.<br>
  * expected. The step count can be reset using resetStepCount() once the iterator reaches the max steps.
  */
-public interface CircularListIterator<T> extends PositionalListIterator<T>, CountingIterator<T>{
+public interface CircularListIterator<T> extends PositionalListIterator<T>, Counter<Integer>{
 
     /**
      * Returns the previous element in the iteration, or throws a NoSuchElementException if the iteration has no more elements.

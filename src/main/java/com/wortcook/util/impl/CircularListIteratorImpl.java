@@ -5,13 +5,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.wortcook.util.CircularListIterator;
+import com.wortcook.util.Counter;
 
+/**
+ * An implementation of the CircularListIterator interface that provides methods for iterating over a list of elements.
+ */
 public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
     private final List<T> elements;
     private Integer currentIndex = null;
     private int starterIdx;
-    private int stepCount = 0;
-    private final int maxAllowedSteps;
+    private final Counter<Integer> stepCount;
 
     /////////////////////////////////////////////////////////////////
     // Constructors
@@ -53,7 +56,7 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
 
         this.elements = elements;
         this.starterIdx = elements.isEmpty()?0:(index % elements.size());
-        this.maxAllowedSteps = maxSteps;
+        this.stepCount = Counter.of(maxSteps);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -95,8 +98,7 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
         final int nextIndex = this.nextIndex();
         final T element = elements.get(nextIndex);
         currentIndex = nextIndex;
-        stepCount++;
-
+        stepCount.count();
         return element;
     }
 
@@ -133,8 +135,6 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
     }
 
 
-    
-    
     /////////////////////////////////////////////////////////////////
     // ListIterator methods
     /////////////////////////////////////////////////////////////////
@@ -164,7 +164,7 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
         return (null == currentIndex) ? //if the iterator is not initialized
             starterIdx % elements.size() // then start at starterIdx modulo the size of the list
             :
-            (stepCount < maxAllowedSteps) ? //else if the max steps has not been reached
+            (stepCount.isUnder()) ? //else if the max steps has not been reached
                 (currentIndex + 1)%elements.size() : //then return the next index modulo the size of the list to wrap around
                 (currentIndex < elements.size() - 1) ? //else if the current index is not at the end of the list
                     currentIndex + 1 : //then return the next index
@@ -200,7 +200,7 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
         final int prevIndex = this.previousIndex();
         final T element = elements.get(prevIndex);
         currentIndex = prevIndex;
-        stepCount++;
+        stepCount.count();
 
         return element;
     }
@@ -220,7 +220,7 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
                 (starterIdx - 1)%elements.size() //else the starterIdx is not 0 so return the previous index modulo the size of the list
             : 
             (0 == currentIndex) ? //else the iterator is initialized and is at the beginning of the list
-                (stepCount < maxAllowedSteps) ? //if the max steps has not been reached
+                (stepCount.isUnder()) ? //if the max steps has not been reached
                     elements.size() - 1 : //then return the last index
                     -1  //else we are at the beginning of the list so return -1 per ListIterator spec
                 :
@@ -346,6 +346,15 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
         return elements;
     }
 
+    /**
+     * Resets the iterator to the same state as if it were newly created. The iterator will start at the "beginning" of the list
+     * and the step count will be reset to 0.
+     */
+    @Override
+    public void reset() {
+        currentIndex = null;
+        stepCount.resetCount();
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // OptionalListIterator methods
@@ -354,20 +363,20 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
     //default methods in the interface are sufficient
 
     ///////////////////////////////////////////////////////////////////////////
-    // CountingIterator methods
+    // Counter methods
     ///////////////////////////////////////////////////////////////////////////
     /**
      * Returns the current step count, i.e. how many times next(), nextElement(), previous(), or previousElement() has been called.
      * @return The current step count.
      */
     @Override
-    public int getCount() {
-        return stepCount;
+    public Integer getCount() {
+        return stepCount.getCount();
     }
 
     @Override
-    public int getLimit() {
-        return maxAllowedSteps;
+    public Integer getLimit() {
+        return stepCount.getLimit();
     }
 
     /**
@@ -375,19 +384,16 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
      */
     @Override
     public void resetCount() {
-        stepCount = 0;
+        stepCount.resetCount();
     }
 
     /**
-     * Resets the iterator to the same state as if it were newly created. The iterator will start at the "beginning" of the list
-     * and the step count will be reset to 0.
+     * Increments the step count by 1. This is called automatically by next(), nextElement(), previous(), and previousElement().
      */
     @Override
-    public void reset() {
-        currentIndex = null;
-        stepCount = 0;
+    public void count() {
+        stepCount.count();
     }
-
 
     ///////////////////////////////////////////////////////////////////////////
     // Protected utility methods

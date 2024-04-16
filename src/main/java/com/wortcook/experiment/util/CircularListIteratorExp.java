@@ -14,7 +14,7 @@ public class CircularListIteratorExp {
         list.add("D");
         list.add("E");
 
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(list).iterator();
+        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(list).withEpochs(2).iterator();
         while (iterator.hasNext()) {
             System.out.println(iterator.next());
         }

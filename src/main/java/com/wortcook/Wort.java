@@ -1,5 +1,6 @@
 package com.wortcook;
 
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -48,6 +49,4 @@ public class Wort {
         }
         return supplier.get();
     }
-
-
 }
