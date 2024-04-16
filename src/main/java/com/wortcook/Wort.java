@@ -37,9 +37,9 @@ public class Wort {
             return defaultVal;
         }
     }
-
-    public static <T> T tryRepeat(final Supplier<T> supplier, final int times) {
-        for(int i = 0 ; i < times ; i++) {
+    
+    public static <T> T tryRepeat(final int times ,final Supplier<T> supplier) {
+        for(int i = 0 ; i < (times - 1) ; i++) {
             try{
                 return supplier.get();
             }catch(Throwable t){
@@ -48,4 +48,6 @@ public class Wort {
         }
         return supplier.get();
     }
+
+
 }

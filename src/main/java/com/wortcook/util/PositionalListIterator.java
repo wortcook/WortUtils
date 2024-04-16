@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface PositionalListIterator<T> extends OptionalListIterator<T>{
     T at();
-    T at(int index);
     void addNext(T element);
     void addAllNext(Collection<T> elements);
     void addPrevious(T element);
@@ -18,9 +17,5 @@ public interface PositionalListIterator<T> extends OptionalListIterator<T>{
 
     default Optional<T> elementAt() {
         return tryOptional(this::at);
-    }
-
-    default Optional<T> elementAt(int index) {
-        return tryOptional(()->at(index));
     }
 }
