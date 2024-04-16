@@ -1,7 +1,7 @@
 package com.wortcook;
 
-import java.util.Iterator;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -48,5 +48,23 @@ public class Wort {
             }
         }
         return supplier.get();
+    }
+
+    public static <T> T withLock(final Lock lock, final Supplier<T> supplier) {
+        lock.lock();
+        try {
+            return supplier.get();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public static void withLock(final Lock lock, final Runnable runnable) {
+        lock.lock();
+        try {
+            runnable.run();
+        } finally {
+            lock.unlock();
+        }
     }
 }
