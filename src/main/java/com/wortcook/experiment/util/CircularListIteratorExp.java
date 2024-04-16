@@ -14,13 +14,13 @@ public class CircularListIteratorExp {
         list.add("D");
         list.add("E");
 
-        CircularListIterator<String> iterator = CircularListIterator.of(list);
+        CircularListIterator<String> iterator = CircularListIterator.builder(list).iterator();
         while (iterator.hasNext()) {
             System.out.println(iterator.next());
         }
 
-        for(String s:CircularListIterator.iterableOf(list, 0, 10)) {
-            System.out.println(s);
-        }
+        // for(String s:CircularListIterator.iterableOf(list, 0, 10)) {
+        //     System.out.println(s);
+        // }
     }
 }

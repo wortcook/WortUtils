@@ -3,6 +3,7 @@ package com.wortcook.util;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import com.wortcook.util.impl.CircularListIteratorImpl;
@@ -46,10 +47,10 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
      * @param <T> - The type of elements in the list. 
      */
     public static class Builder<T>{
-        private List<T> elementsList   = null;
-        private Integer startIdx           = null;
-        private Integer maxSteps           = null;
-        private Integer maxEpochs          = null;
+        private List<T> elementsList   = Collections.<T>emptyList();
+        private int     startIdx       = 0;
+        private int     maxSteps       = Integer.MAX_VALUE;
+        private int     maxEpochs      = -1;
 
         /*
          * Sets the elements to be iterated over. The iterator returned will be over a List copy of the passed elements
@@ -104,7 +105,7 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
          * If the index is greater than the size of the list, the index will be the index modulo the size of the list.
          * @param index - The index to start at.
          */
-        public Builder<T> startAt(final int index) {
+        public Builder<T> startingAt(final int index) {
             assert index >= 0 : "Index must be greater than or equal to 0.";
             this.startIdx = index;
             return this;
@@ -115,7 +116,7 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
          * The default maximum number of steps is twice the size of the list.
          * @param maxSteps - The maximum number of steps the iterator can take.
          */
-        public Builder<T> maxSteps(final int maxSteps) {
+        public Builder<T> withLimit(final int maxSteps) {
             assert maxSteps > 0 : "Max steps must be greater than 0.";
             this.maxSteps = maxSteps;
             return this;
@@ -129,7 +130,7 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
          * change.
          * @param maxEpochs - The maximum number of epochs the iterator can take.
          */
-        public Builder<T> maxEpochs(final int maxEpochs) {
+        public Builder<T> withEpochs(final int maxEpochs) {
             assert maxEpochs > 0 : "Max epochs must be greater than 0.";
             this.maxEpochs = maxEpochs;
             return this;
@@ -142,21 +143,18 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
          * @return The CircularListIterator.
          */
         public CircularListIterator<T> iterator() {
-            if(null == elementsList) {
-                throw new IllegalStateException("No elements provided.");
-            }
 
-            if( maxEpochs != null ) {
+            if( maxEpochs > 0 ) {
                 maxSteps = elementsList.size() * maxEpochs;
             }
 
-            if(null == startIdx) {
-                return (null == maxSteps) ? CircularListIterator.<T>of(elementsList) : CircularListIterator.<T>of(elementsList, 0, maxSteps);
-            } else {
-                return (null == maxSteps) ? CircularListIterator.<T>of(elementsList, startIdx) : CircularListIterator.<T>of(elementsList, startIdx, maxSteps);
-            }
+            return new CircularListIteratorImpl<T>(elementsList, startIdx, maxSteps);
         }
 
+        /*
+         * Builds an Iterable that returns a CircularListIterator when iterator is called.
+         * @return An Iterable that returns a CircularListIterator when iterator is called.
+         */
         public Iterable<T> iterable() {
             final CircularListIterator<T> iterator = iterator();
             return new Iterable<T>(){
@@ -168,6 +166,9 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Static Utility Methods
+    ///////////////////////////////////////////////////////////////////////////
     /**
      * Utility method to create a Builder for a CircularListIterator.
      * @param <T>
@@ -177,53 +178,16 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
         return new Builder<>();
     }
 
-    public static <T> CircularListIterator<T> of(final List<T> elements) {
-        return new CircularListIteratorImpl<>(elements);
+    public static <T> Builder<T> builder(final Collection<T> elements) {
+        return new Builder<T>().using(elements);
     }
 
-    public static <T> CircularListIterator<T> of(final List<T> elements, final int index) {
-        return new CircularListIteratorImpl<>(elements, index);
+    public static <T> Builder<T> builder(final T[] elements) {
+        return new Builder<T>().using(elements);
     }
 
-    public static <T> CircularListIterator<T> of(final List<T> elements, final int index, final int maxSteps) {
-        return new CircularListIteratorImpl<>(elements, index, maxSteps);
-    }
-
-    public static <T> CircularListIterator<T> of(@SuppressWarnings("unchecked") T... elements) {
-        return new CircularListIteratorImpl<>(new ArrayList<>(List.of(elements)));
-    }
-    
-    /**
-     * Utility method to create an Iterable that returns a CircularListIterator when iterator is called.
-     * @param <T> - The type of elements in the list.
-     * @param elements - The list of elements to iterate over.
-     * @return An Iterable that returns a CircularListIterator when iterator is called.
-     */
-    public static <T> Iterable<T> iterableOf(final List<T> elements){
-        return CircularListIterator.<T>builder().over(elements).iterable();
-    }
-
-    /**
-     * Utility method to create an Iterable that returns a CircularListIterator when iterator is called.
-     * @param <T>
-     * @param elements - The list of elements to iterate over.
-     * @param index - The index to start at.
-     * @return An Iterable that returns a CircularListIterator when iterator is called.
-     */
-    public static <T> Iterable<T> iterableOf(final List<T> elements, final int index){
-        return CircularListIterator.<T>builder().over(elements).startAt(index).iterable();
-    }
-
-    /**
-     * Utility method to create an Iterable that returns a CircularListIterator when iterator is called.
-     * @param <T>
-     * @param elements - The list of elements to iterate over.
-     * @param index - The index to start at.
-     * @param maxSteps - The maximum number of steps the iterator can take.
-     * @return An Iterable that returns a CircularListIterator when iterator is called.
-     */
-    public static <T> Iterable<T> iterableOf(final List<T> elements, final int index, final int maxSteps){
-        return CircularListIterator.<T>builder().over(elements).startAt(index).maxSteps(maxSteps).iterable();
+    public static <T> Builder<T> builder(final List<T> elements) {
+        return new Builder<T>().using(elements);
     }
 }
  

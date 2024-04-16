@@ -106,6 +106,33 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
                 (isUnder() || hasNextNoWrap());
     }
 
+    /**
+     * Removes the current element from the list. If the iterator is not initialized by either calling next(), previous(),
+     * nextElement(), or previousElement() first, this will throw an IllegalStateException.
+     * After remove is called the iterator is no longer initialized and a call to next(), previous(), nextElement(),
+     * or previousElement() must be made before any further changes can be made; remove(), set(), or add().
+     * <br><br><br>
+     * <code>
+     *    CircularListIterator&lt;String&gt; iterator = new CircularListIterator&lt;&gt;(new ArrayList&lt;String&gt;(Arrays.asList("A", "B", "C")));<br>
+     *    iterator.next(); //iterator now "points" to "A"<br>
+     *    iterator.next(); //iterator now "points" to "B"<br>
+     *    iterator.remove(); //removes "B" from the list<br>
+     *    iterator.next(); //iterator now "points" to "C"<br>
+     * <br>
+     * //note that iteratoror.prev() would have returned A.<br>
+     * </code><br>
+     * Another way to think about it is that the remove leaves a hole where iterator is currently pointing. So
+     * in order to make any further changes the iterator must be moved to a valid index.
+     */
+    @Override
+    public void remove() {
+        checkIndex();
+        elements.remove((int)currentIndex);
+        starterIdx = currentIndex; //reset the starter index to the current index that way next/prev will work as expected.
+        currentIndex = null; //iterator is no longer initialized, we have a "hole" in the list where the iterator was pointing.
+    }
+
+
     
     
     /////////////////////////////////////////////////////////////////
@@ -127,6 +154,24 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
             currentIndex = this.nextIndex();
         }
     }
+
+    /**
+     * Returns the index of the next element in the list. If the iterator is at the end of the list, this will return 0.
+     * If the list is empty, this will return 0.
+     * @return The index of the next element in the list.
+     */
+    @Override
+    public int nextIndex() {
+        return (null == currentIndex) ? //if the iterator is not initialized
+            starterIdx % elements.size() // then start at starterIdx modulo the size of the list
+            :
+            (stepCount < maxAllowedSteps) ? //else if the max steps has not been reached
+                (currentIndex + 1)%elements.size() : //then return the next index modulo the size of the list to wrap around
+                (currentIndex < elements.size() - 1) ? //else if the current index is not at the end of the list
+                    currentIndex + 1 : //then return the next index
+                    elements.size(); //else we are at the end of the list so return elements.size() per ListIterator spec
+    }
+
 
     /**
      * Returns if there is a previous element in the list. If the maximum number of steps is reached, this will return false.
@@ -163,23 +208,6 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
 
 
     /**
-     * Returns the index of the next element in the list. If the iterator is at the end of the list, this will return 0.
-     * If the list is empty, this will return 0.
-     * @return The index of the next element in the list.
-     */
-    @Override
-    public int nextIndex() {
-        return (null == currentIndex) ? //if the iterator is not initialized
-            starterIdx % elements.size() // then start at starterIdx modulo the size of the list
-            :
-            (stepCount < maxAllowedSteps) ? //else if the max steps has not been reached
-                (currentIndex + 1)%elements.size() : //then return the next index modulo the size of the list to wrap around
-                (currentIndex < elements.size() - 1) ? //else if the current index is not at the end of the list
-                    currentIndex + 1 : //then return the next index
-                    elements.size(); //else we are at the end of the list so return elements.size() per ListIterator spec
-    }
-
-    /**
      * Returns the index of the previous element in the list. If the iterator is at the beginning of the list, this will return the last index.
      * If the list is empty, this will return 0.
      * @return The index of the previous element in the list.
@@ -200,31 +228,6 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
                 currentIndex - 1; //iterator initialized and not at the beginning of the list so return the previous index
     }
 
-    /**
-     * Removes the current element from the list. If the iterator is not initialized by either calling next(), previous(),
-     * nextElement(), or previousElement() first, this will throw an IllegalStateException.
-     * After remove is called the iterator is no longer initialized and a call to next(), previous(), nextElement(),
-     * or previousElement() must be made before any further changes can be made; remove(), set(), or add().
-     * <br><br><br>
-     * <code>
-     *    CircularListIterator&lt;String&gt; iterator = new CircularListIterator&lt;&gt;(new ArrayList&lt;String&gt;(Arrays.asList("A", "B", "C")));<br>
-     *    iterator.next(); //iterator now "points" to "A"<br>
-     *    iterator.next(); //iterator now "points" to "B"<br>
-     *    iterator.remove(); //removes "B" from the list<br>
-     *    iterator.next(); //iterator now "points" to "C"<br>
-     * <br>
-     * //note that iteratoror.prev() would have returned A.<br>
-     * </code><br>
-     * Another way to think about it is that the remove leaves a hole where iterator is currently pointing. So
-     * in order to make any further changes the iterator must be moved to a valid index.
-     */
-    @Override
-    public void remove() {
-        checkIndex();
-        elements.remove((int)currentIndex);
-        starterIdx = currentIndex; //reset the starter index to the current index that way next/prev will work as expected.
-        currentIndex = null; //iterator is no longer initialized, we have a "hole" in the list where the iterator was pointing.
-    }
 
     /**
      * Sets the current element to the passed element. If the iterator is not initialized by either calling next(), previous(),
