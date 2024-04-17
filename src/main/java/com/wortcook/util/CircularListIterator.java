@@ -174,7 +174,7 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
             return new Iterable<T>(){
                 @Override
                 public Iterator<T> iterator() {
-                    return iterator();
+                    return build();
                 }
             };
         }

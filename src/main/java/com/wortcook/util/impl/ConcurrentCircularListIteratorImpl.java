@@ -9,14 +9,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class ConcurrentCircularListIteratorImpl<T> extends CircularListIteratorImpl<T> {
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public ConcurrentCircularListIteratorImpl(final List<T> elements) {
-        super(elements);
-    }
-
-    public ConcurrentCircularListIteratorImpl(final List<T> elements, final int index) {
-        super(elements, index);
-    }
-
     public ConcurrentCircularListIteratorImpl(final List<T> elements, final int index, final int step) {
         super(elements, index, step);
     }

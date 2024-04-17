@@ -19,27 +19,6 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
     /////////////////////////////////////////////////////////////////
     // Constructors
     /////////////////////////////////////////////////////////////////
-    /**
-     * Creates a CircularListIterator that starts at the beginning of the passed list
-     * and has a maximum number of steps equal Integer.MAX_VALUE.
-     * @param elements - The list of elements to iterate through. Note any changes made to
-     *                   the list will be reflected in the iterator and vice versa.
-     */
-    public CircularListIteratorImpl(final List<T> elements) {
-        this(elements, 0);
-    }
-
-    /**
-     * Creates a CircularListIterator that starts at the specified index of the passed list
-     * and has a maximum number of steps equal Integer.MAX_VALUE.
-     * @param elements - The list of elements to iterate through. Note any changes made to
-     *                   the list will be reflected in the iterator and vice versa.
-     * @param index - The index to start at. When next or previous is first called this will be the index of the element returned.
-     *                use 0 to start at the beginning of the list so that max steps can be used. 
-     */
-    public CircularListIteratorImpl(final List<T> elements, final int index) {
-        this(elements, index, Integer.MAX_VALUE);
-    }
 
     /**
      * Creates a CircularListIterator that starts at the specified index of the passed list.
