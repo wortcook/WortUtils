@@ -191,5 +191,45 @@ public interface CircularListIterator<T> extends PositionalListIterator<T>, Coun
     public static <T> Builder<T> builder() {
         return new Builder<>();
     }
+
+    public static <T> Builder<T> builder(final Collection<T> elements) {
+        Builder<T> builder = builder();
+        return builder.using(elements);
+    }
+
+    public static <T> Builder<T> builder(final T[] elements) {
+        Builder<T> builder = builder();
+        return builder.using(elements);
+    }
+
+    public static <T> CircularListIterator<T> of(final Collection<T> elements) {
+        Builder<T> builder = builder();
+        return builder.using(elements).build();
+    }
+
+    public static <T> CircularListIterator<T> of(final T[] elements) {
+        Builder<T> builder = builder();
+        return builder.using(elements).build();
+    }
+
+    public static <T> CircularListIterator<T> of(final Collection<T> elements, final int startIdx) {
+        Builder<T> builder = builder();
+        return builder.using(elements).startingAt(startIdx).build();
+    }
+
+    public static <T> CircularListIterator<T> of(final T[] elements, final int startIdx) {
+        Builder<T> builder = builder();
+        return builder.using(elements).startingAt(startIdx).build();
+    }
+
+    public static <T> CircularListIterator<T> of(final Collection<T> elements, final int startIdx, final int maxSteps) {
+        Builder<T> builder = builder();
+        return builder.using(elements).startingAt(startIdx).withLimit(maxSteps).build();
+    }
+
+    public static <T> CircularListIterator<T> of(final T[] elements, final int startIdx, final int maxSteps) {
+        Builder<T> builder = builder();
+        return builder.using(elements).startingAt(startIdx).withLimit(maxSteps).build();
+    }
 }
  

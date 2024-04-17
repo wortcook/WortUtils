@@ -6,6 +6,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * A thread-safe implementation of the CircularListIterator interface. This implementation uses a ReentrantReadWriteLock
+ * to ensure that the iterator is thread-safe. This implementation is a wrapper around the CircularListIteratorImpl class.
+ * All methods are sychronized using either a read lock or a write lock.
+ */
 public class ConcurrentCircularListIteratorImpl<T> extends CircularListIteratorImpl<T> {
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -48,6 +53,10 @@ public class ConcurrentCircularListIteratorImpl<T> extends CircularListIteratorI
         return withLock(lock.writeLock(), super::next);
     }
 
+    /**
+     * Returns if there is a next element in the list. If the maximum number of steps is reached, this method will return false
+     * if the iterator is at the end of the list. If the list is empty, this will return false.
+     */
     @Override
     public boolean hasNext() {
         return withLock(lock.readLock(), super::hasNext);
