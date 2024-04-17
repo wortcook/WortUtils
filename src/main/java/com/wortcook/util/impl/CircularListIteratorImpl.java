@@ -285,7 +285,6 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
         } else {
             elements.add(currentIndex, element);
             //stupid math trick to get the current index to continue pointing to the same element.
-            currentIndex += 1;
             currentIndex = this.nextIndex();
         }
     }
@@ -364,14 +363,6 @@ public class CircularListIteratorImpl<T> implements CircularListIterator<T>{
     @Override
     public void resetCount() {
         stepCount.resetCount();
-    }
-
-    /**
-     * Increments the step count by 1. This is called automatically by next(), nextElement(), previous(), and previousElement().
-     */
-    @Override
-    public void count() {
-        stepCount.count();
     }
 
     ///////////////////////////////////////////////////////////////////////////

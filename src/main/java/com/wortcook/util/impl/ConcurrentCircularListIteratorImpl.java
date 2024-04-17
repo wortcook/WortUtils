@@ -255,12 +255,4 @@ public class ConcurrentCircularListIteratorImpl<T> extends CircularListIteratorI
     public void resetCount() {
         withLock(lock.writeLock(), super::resetCount);
     }
-
-    /**
-     * Increments the step count by 1. This is called automatically by next(), nextElement(), previous(), and previousElement().
-     */
-    @Override
-    public void count() {
-        withLock(lock.writeLock(), super::count);
-    }
 }

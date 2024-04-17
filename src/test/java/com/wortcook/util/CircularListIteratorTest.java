@@ -14,10 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CircularListIteratorTest {
 
+
+    protected CircularListIterator.Builder<String> getBuilderWithElements(){
+        return CircularListIterator.<String>builder().over(new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E")));
+    }
+
     @Test
-    void constructors(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+    void happyPath(){
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
         assertTrue(iterator.hasNext());
         assertEquals("A", iterator.next());
         assertTrue(iterator.hasNext());
@@ -29,7 +33,7 @@ public class CircularListIteratorTest {
         assertTrue(iterator.hasNext());
         assertEquals("E", iterator.next());
 
-        iterator = CircularListIterator.<String>builder().over(elements).startingAt(2).build();
+        iterator = getBuilderWithElements().startingAt(2).build();
         assertTrue(iterator.hasNext());
         assertEquals("C", iterator.next());
         assertTrue(iterator.hasNext());
@@ -42,7 +46,7 @@ public class CircularListIteratorTest {
             iterator.next();
         }
 
-        iterator = CircularListIterator.<String>builder().over(elements).startingAt(5).build();
+        iterator = getBuilderWithElements().startingAt(5).build();
         assertTrue(iterator.hasNext());
         assertEquals("A", iterator.next());
         assertTrue(iterator.hasNext());
@@ -55,7 +59,7 @@ public class CircularListIteratorTest {
         assertEquals("E", iterator.next());
 
         //should iterate through the list twice
-        iterator = CircularListIterator.<String>builder().over(elements).withEpochs(2).build();
+        iterator = getBuilderWithElements().withEpochs(2).build();
 
         assertTrue(iterator.hasNext());
         assertEquals("A", iterator.next());
@@ -92,8 +96,7 @@ public class CircularListIteratorTest {
 
     @Test
     void hasNext(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
         for(int i = 0; i < 20; i++){
             assertTrue(iterator.hasNext());
             iterator.next();
@@ -108,8 +111,7 @@ public class CircularListIteratorTest {
 
     @Test
     void hasNextNoWrap(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
         assertTrue(iterator.hasNextNoWrap());
         iterator.next();
         assertTrue(iterator.hasNextNoWrap());
@@ -126,8 +128,7 @@ public class CircularListIteratorTest {
 
     @Test
     void next(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
         assertEquals("A", iterator.next());
         assertEquals("B", iterator.next());
         assertEquals("C", iterator.next());
@@ -139,7 +140,7 @@ public class CircularListIteratorTest {
         assertEquals("D", iterator.next());
         assertEquals("E", iterator.next());
 
-        iterator = CircularListIterator.<String>builder().over(elements).startingAt(2).build();
+        iterator = getBuilderWithElements().startingAt(2).build();
         assertEquals("C", iterator.next());
         assertEquals("D", iterator.next());
         assertEquals("E", iterator.next());
@@ -158,10 +159,8 @@ public class CircularListIteratorTest {
 
     @Test
     void nextElement(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-
         //should iterate through the list twice
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).withEpochs(2).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().withEpochs(2).build();
 
         assertEquals("A", iterator.nextElement().get());
         assertEquals("B", iterator.nextElement().get());
@@ -179,8 +178,7 @@ public class CircularListIteratorTest {
 
     @Test
     void hasPrevious(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
         for(int i = 0; i < 20; i++){
             assertTrue(iterator.hasPrevious());
             iterator.previous();
@@ -195,8 +193,7 @@ public class CircularListIteratorTest {
 
     @Test
     void hasPreviousNoWrap(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
         assertFalse(iterator.hasPreviousNoWrap());
         iterator.next();
         iterator.next();
@@ -218,8 +215,7 @@ public class CircularListIteratorTest {
 
     @Test
     void previous(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
         assertEquals("E", iterator.previous());
         assertEquals("D", iterator.previous());
         assertEquals("C", iterator.previous());
@@ -230,7 +226,7 @@ public class CircularListIteratorTest {
         assertEquals("C", iterator.previous());
         assertEquals("B", iterator.previous());
 
-        iterator = CircularListIterator.<String>builder().over(elements).startingAt(5).build();
+        iterator = getBuilderWithElements().startingAt(5).build();
         assertEquals("E", iterator.previous());
         assertEquals("D", iterator.previous());
         assertEquals("C", iterator.previous());
@@ -247,10 +243,8 @@ public class CircularListIteratorTest {
 
     @Test
     void previousElement(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-
         //should iterate through the list twice
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).withEpochs(2).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().withEpochs(2).build();
 
         assertEquals("E", iterator.previousElement().get());
         assertEquals("D", iterator.previousElement().get());
@@ -267,8 +261,7 @@ public class CircularListIteratorTest {
 
     @Test
     void nextIndex(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
         assertEquals(0, iterator.nextIndex());
         iterator.next();
         assertEquals(1, iterator.nextIndex());
@@ -291,7 +284,7 @@ public class CircularListIteratorTest {
         iterator.next();
         assertEquals(0, iterator.nextIndex());
 
-        iterator = CircularListIterator.<String>builder().over(elements).withLimit(5).build();
+        iterator = getBuilderWithElements().withLimit(5).build();
         assertEquals(0, iterator.nextIndex());
         iterator.next();
         assertEquals(1, iterator.nextIndex());
@@ -308,8 +301,7 @@ public class CircularListIteratorTest {
 
     @Test
     void previousIndex(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
         assertEquals(4, iterator.previousIndex());
         iterator.next();
         assertEquals(4, iterator.previousIndex());
@@ -334,10 +326,10 @@ public class CircularListIteratorTest {
         iterator.next();
         assertEquals(4, iterator.previousIndex());
 
-        iterator = CircularListIterator.<String>builder().over(elements).startingAt(4).build();
+        iterator = getBuilderWithElements().startingAt(4).build();
         assertEquals(3, iterator.previousIndex());
 
-        iterator = CircularListIterator.<String>builder().over(elements).withLimit(5).build();
+        iterator = getBuilderWithElements().withLimit(5).build();
         assertEquals(4, iterator.previousIndex());
         iterator.previous();
         assertEquals(3, iterator.previousIndex());
@@ -356,8 +348,7 @@ public class CircularListIteratorTest {
 
     @Test
     void remove(){
-        List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
 
         assertEquals("A",iterator.next());
         assertEquals("B",iterator.next());
@@ -379,7 +370,7 @@ public class CircularListIteratorTest {
         assertEquals("A", iterator.next());
         assertEquals("D", iterator.next());
 
-        assertEquals(elements.get(0), iterator.next());
+        assertEquals(iterator.elements().get(0), iterator.next());
 
 
         final CircularListIterator<String> iteratorFail = 
@@ -399,32 +390,31 @@ public class CircularListIteratorTest {
 
     @Test
     void set(){
-        List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
 
         assertEquals("A", iterator.next());
-        assertEquals("A", elements.get(0)); 
+        assertEquals("A", iterator.elements().get(0)); 
         iterator.set("Z");
-        assertEquals("Z", elements.get(0));
+        assertEquals("Z", iterator.elements().get(0));
 
         assertEquals("B", iterator.next());
-        assertEquals("B", elements.get(1));
+        assertEquals("B", iterator.elements().get(1));
         iterator.set("Y");
-        assertEquals("Y", elements.get(1));
+        assertEquals("Y", iterator.elements().get(1));
 
         assertEquals("C", iterator.next());
-        assertEquals("C", elements.get(2));
+        assertEquals("C", iterator.elements().get(2));
         iterator.set("X");
-        assertEquals("X", elements.get(2));
+        assertEquals("X", iterator.elements().get(2));
 
         assertEquals("D",iterator.next());
-        assertEquals("D", elements.get(3));
+        assertEquals("D", iterator.elements().get(3));
         iterator.set("W");
-        assertEquals("W", elements.get(3));
+        assertEquals("W", iterator.elements().get(3));
 
         assertEquals("E", iterator.next());
         iterator.set("V");
-        assertEquals("V", elements.get(4));
+        assertEquals("V", iterator.elements().get(4));
         
         assertEquals("Z", iterator.next());
         assertEquals("Y", iterator.next());
@@ -435,15 +425,14 @@ public class CircularListIteratorTest {
 
     @Test
     void add(){
-        List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
 
         assertEquals("A", iterator.next());
         iterator.add("Z");
-        assertEquals("Z", elements.get(elements.size()-1));
+        assertEquals("Z", iterator.elements().get(iterator.elements().size()-1));
         assertEquals("B", iterator.next());
         iterator.add("Y");
-        assertEquals("Y", elements.get(1));
+        assertEquals("Y", iterator.elements().get(1));
         assertEquals("C", iterator.next());
         assertEquals("D", iterator.next());
         assertEquals("E", iterator.next());
@@ -459,7 +448,7 @@ public class CircularListIteratorTest {
     // @Test
     // void addAll(){
     //     List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
-    //     CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).iterator();
+    //     CircularListIterator<String> iterator = getBuilder().iterator();
 
     //     assertEquals("A", iterator.next());
     //     iterator.addAll(Arrays.asList("Z", "Y"));
@@ -486,7 +475,7 @@ public class CircularListIteratorTest {
     @Test
     void at(){
         List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
 
         assertEquals("A", iterator.next());
         assertEquals("A", iterator.at());
@@ -506,7 +495,7 @@ public class CircularListIteratorTest {
     void elementAt(){
         List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
         CircularListIterator<String> iterator = 
-            CircularListIterator.<String>builder().over(elements).withEpochs(2).build();
+            getBuilderWithElements().withEpochs(2).build();
 
         assertTrue(iterator.elementAt().isEmpty());
         assertEquals("A", iterator.next());
@@ -537,8 +526,7 @@ public class CircularListIteratorTest {
 
     @Test
     void getCount(){
-        List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
 
         assertEquals(0, iterator.getCount());
         assertEquals("A", iterator.next());
@@ -567,7 +555,7 @@ public class CircularListIteratorTest {
     @Test
     void resetStepCount(){
         List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
 
         assertEquals(0, iterator.getCount());
         assertEquals("A", iterator.next());
@@ -595,9 +583,9 @@ public class CircularListIteratorTest {
     }
 
     @Test
-    void writeAhead(){
+    void addNext(){
         List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
 
         assertThrows(java.lang.IllegalStateException.class, () -> iterator.addNext("Z"));
         assertEquals("A", iterator.next());
@@ -614,9 +602,8 @@ public class CircularListIteratorTest {
     }
 
     @Test
-    void writeAllAhead(){
-        List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+    void addAllNext(){
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
 
         assertThrows(java.lang.IllegalStateException.class, () -> iterator.addAllNext(Arrays.asList("Z", "Y")));
         assertEquals("A", iterator.next());
@@ -636,9 +623,47 @@ public class CircularListIteratorTest {
     }
 
     @Test
+    void addPrevious(){
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
+
+        assertThrows(java.lang.IllegalStateException.class, () -> iterator.addPrevious("Z"));
+        assertEquals("E", iterator.previous());
+        iterator.addPrevious("Z");
+        assertEquals("Z", iterator.previous());
+        assertEquals("D", iterator.previous());
+        assertEquals("C", iterator.previous());
+        assertEquals("B", iterator.previous());
+        assertEquals("A", iterator.previous());
+        iterator.addPrevious("F");
+        assertEquals("F", iterator.previous());
+        assertEquals("E", iterator.previous());
+        assertEquals("Z", iterator.previous());
+    }
+
+    @Test
+    void addAllPrevious(){
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
+
+        assertThrows(java.lang.IllegalStateException.class, () -> iterator.addAllPrevious(Arrays.asList("Z", "Y")));
+        assertEquals("E", iterator.previous());
+        iterator.addAllPrevious(Arrays.asList("Z", "Y"));
+        assertEquals("Y", iterator.previous());
+        assertEquals("Z", iterator.previous());
+        assertEquals("D", iterator.previous());
+        assertEquals("C", iterator.previous());
+        assertEquals("B", iterator.previous());
+        assertEquals("A", iterator.previous());
+        iterator.addAllPrevious(Arrays.asList("F", "G"));
+        assertEquals("G", iterator.previous());
+        assertEquals("F", iterator.previous());
+        assertEquals("E", iterator.previous());
+        assertEquals("Y", iterator.previous());
+        assertEquals("Z", iterator.previous());
+    }
+
+    @Test
     void emptyList(){
-        List<String> elements = new ArrayList<>();
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(new ArrayList<>()).build();
 
         assertFalse(iterator.hasNext());
         assertFalse(iterator.hasPrevious());
@@ -677,7 +702,7 @@ public class CircularListIteratorTest {
     @Test
     void elements(){
         List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
 
         assertEquals(elements, iterator.elements());
     }
@@ -685,7 +710,7 @@ public class CircularListIteratorTest {
     @Test
     void reset(){
         List<String> elements = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E"));
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).withEpochs(2).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().withEpochs(2).build();
 
         assertEquals("A", iterator.next());
         assertEquals("B", iterator.next());
@@ -724,23 +749,21 @@ public class CircularListIteratorTest {
 
     @Test
     void builder(){
-        List<String> elements = Arrays.asList("A", "B", "C", "D", "E");
-        CircularListIterator<String> iterator = CircularListIterator.<String>builder().over(elements).build();
+        CircularListIterator<String> iterator = getBuilderWithElements().build();
         assertEquals("A", iterator.next());//initialize the iterator
         assertEquals("B", iterator.next());
         assertEquals("C", iterator.next());
         assertEquals("D", iterator.next());
         assertEquals("E", iterator.next());
         assertEquals("A", iterator.next());
-        assertEquals(elements, iterator.elements());
 
-        iterator = CircularListIterator.<String>builder().over(elements).startingAt(2).build();
+        iterator = getBuilderWithElements().startingAt(2).build();
         assertEquals("C", iterator.next());//initialize the iterator
         assertEquals("D", iterator.next());
         assertEquals("E", iterator.next());
         assertEquals("A", iterator.next());
 
-        iterator = CircularListIterator.<String>builder().over(elements).startingAt(5).build();
+        iterator = getBuilderWithElements().startingAt(5).build();
         assertEquals("A", iterator.next());//initialize the iterator
         assertEquals("B", iterator.next());
         assertEquals("C", iterator.next());
@@ -748,7 +771,7 @@ public class CircularListIteratorTest {
         assertEquals("E", iterator.next());
         assertEquals("A", iterator.next());
 
-        iterator = CircularListIterator.<String>builder().over(elements).startingAt(0).withLimit(10).build();
+        iterator = getBuilderWithElements().startingAt(0).withLimit(10).build();
         assertEquals("A", iterator.next());//initialize the iterator
         assertEquals("B", iterator.next());
         assertEquals("C", iterator.next());
@@ -761,7 +784,7 @@ public class CircularListIteratorTest {
         assertEquals("E", iterator.next());
         assertFalse(iterator.hasNext());
 
-        iterator = CircularListIterator.<String>builder().over(elements).withEpochs(2).build();
+        iterator = getBuilderWithElements().withEpochs(2).build();
         assertEquals("A", iterator.next());//initialize the iterator
         assertEquals("B", iterator.next());
         assertEquals("C", iterator.next());
@@ -774,7 +797,7 @@ public class CircularListIteratorTest {
         assertEquals("E", iterator.next());
         assertFalse(iterator.hasNext());
 
-        iterator = CircularListIterator.<String>builder().over(elements).startingAt(0).withEpochs(2).build();
+        iterator = getBuilderWithElements().startingAt(0).withEpochs(2).build();
         assertEquals("A", iterator.next());//initialize the iterator
         assertEquals("B", iterator.next());
         assertEquals("C", iterator.next());
@@ -787,14 +810,13 @@ public class CircularListIteratorTest {
         assertEquals("E", iterator.next());
         assertFalse(iterator.hasNext());
 
-        iterator = CircularListIterator.<String>builder().using(elements).build();
+        iterator = CircularListIterator.<String>builder().using(iterator.elements()).build();
         assertEquals("A", iterator.next());//initialize the iterator
         assertEquals("B", iterator.next());
         assertEquals("C", iterator.next());
         assertEquals("D", iterator.next());
         assertEquals("E", iterator.next());
         assertEquals("A", iterator.next());
-        assertFalse(elements == iterator.elements());
 
         iterator = CircularListIterator.<String>builder().using(new String[]{"A", "B", "C", "D", "E"}).build();
         assertEquals("A", iterator.next());//initialize the iterator
@@ -824,8 +846,8 @@ public class CircularListIteratorTest {
 
         assertThrows(NoSuchElementException.class, () -> CircularListIterator.<String>builder().build().next());
 
-        for(String s: CircularListIterator.<String>builder().using(elements).withEpochs(1).iterable()){
-            assertEquals(elements.get(elements.indexOf(s)), s);
+        for(String s: CircularListIterator.<String>builder().using(iterator.elements()).withEpochs(1).iterable()){
+            assertEquals(iterator.elements().get(iterator.elements().indexOf(s)), s);
         }
     }
 
