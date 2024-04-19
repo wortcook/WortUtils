@@ -252,6 +252,11 @@ public class ConcurrentCircularListIteratorImpl<T> extends CircularListIteratorI
         return withLock(lock.readLock(), super::getCount);
     }
 
+    /**
+     * Returns the limit of the step count, i.e. the maximum number of steps that can be taken before the iterator
+     * will return false for hasNext() or hasPrevious() if the iterator is at the beginning or end of the list respectively.
+     * @return The limit of the step count.
+     */
     @Override
     public Integer getLimit() {
         return withLock(lock.readLock(), super::getLimit);
