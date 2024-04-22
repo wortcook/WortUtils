@@ -1,10 +1,8 @@
 package com.wortcook.experiment.util;
 
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-public class TreeMetric<T> extends Tree.DefaultTree<Tree<? extends Comparable<T>>>{
+public class TreeMetric extends Tree.DefaultTree<Tree<? extends Comparable<?>>>{
 
     private Integer height = null;
     private Integer depth  = null;
@@ -12,9 +10,13 @@ public class TreeMetric<T> extends Tree.DefaultTree<Tree<? extends Comparable<T>
     
 
 
+    public TreeMetric(Tree<?> value) {
+        super(value);
+    }
+
     @SuppressWarnings("unchecked")
     private void checkChildren() {
-        List<Tree<Tree<? extends Comparable<T>>>> children = getChildren();
+        List<TreeMetric> children = getChildren();
         
     }
 
@@ -22,7 +24,7 @@ public class TreeMetric<T> extends Tree.DefaultTree<Tree<? extends Comparable<T>
         if(height == null) {
             checkChildren();
             height = 0;
-            for(Tree<Tree<? extends Comparable<T>>> child : children) {
+            for(Tree<Tree<? extends Comparable<T>>> child : getChildren()) {
                 height = Math.max(height, ((TreeMetric<T>)child.getValue()).getHeight());
             }
             height++;
@@ -36,7 +38,7 @@ public class TreeMetric<T> extends Tree.DefaultTree<Tree<? extends Comparable<T>
             TreeMetric<T> parent = this;
             while(parent != null) {
                 depth++;
-                parent = parent.getParent();
+                parent = (TreeMetric<T>)parent.getParent();
             }
         }
         return depth;
@@ -45,7 +47,7 @@ public class TreeMetric<T> extends Tree.DefaultTree<Tree<? extends Comparable<T>
     public Integer getWidth() {
         if(width == null) {
             checkChildren();
-            width = children.size();
+            width = getChildren().size();
         }
         return width;
     }
