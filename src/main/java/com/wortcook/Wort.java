@@ -5,8 +5,11 @@ import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 public class Wort {
+    public static final Logger logger = Logger.getLogger(Wort.class.getName());
+
     public static <T> Optional<T> tryOptional(final Supplier<T> supplier) {
         try {
             return Optional.of(supplier.get());
