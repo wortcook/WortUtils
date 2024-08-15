@@ -1,10 +1,6 @@
 package com.wortcook.executecycle;
 
-import java.util.Map;
-import java.util.HashMap;
-
 import java.util.concurrent.Callable;
-import java.util.function.Consumer;
 
 
 public abstract class ExecuteCycle implements Callable<Long> {
